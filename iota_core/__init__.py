@@ -78,7 +78,7 @@ class builder:
   def function(self, cog, func, *args, quiet=False):
     return self.shell.built_in[cog][func](*args, quiet=quiet)
 
-  def script(self, script_name, project, args):
+  def script(self, script_name, project, args):                            
     if script_name in self.config['scripts'][project]:
       if 'env' in self.config['scripts'][project]:
         env_vars = self.config['scripts'][project]['env']
@@ -90,4 +90,12 @@ class builder:
           env_vars[x] = os.environ[x]
         env_vars['PATH'] = env_vars['PATH'].replace('${PATH}',os.environ['PATH'])
       for _ in self.config['scripts'][project][script_name].split('\n'):
-        self.shell.built_in['shell']['execute'](_, quiet=False, vars=[env_vars])
+        ######
+        ###### TecTone only, requires discord cog
+        self.function('discord','create_hook', f"Executing: {_}").send()
+        ######
+        ######
+        ret = self.shell.built_in['shell']['execute'](_, quiet=False, vars=[env_vars])
+        if ret[0] != 0:
+          return ret
+    
