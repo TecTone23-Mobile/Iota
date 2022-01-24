@@ -1,0 +1,11 @@
+{
+  "name":"discord",
+  "version":"1",
+  "functions":[
+    "create_hook"
+  ],
+  "variables":"multi",
+  "depends":"cogs.discord",
+  "requires":["requests"]
+}
+
