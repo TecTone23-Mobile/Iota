@@ -44,6 +44,8 @@ def execute(command, env):
     try:
       if command.strip():
         subprocess.run(command.strip().split(' '), env=env)
+        return [0,'']
     except Exception as e:
       print("SHELL: {}: {}".format(e,command.strip()))
       print(f"ENV: {env}")
+      return [1, e]

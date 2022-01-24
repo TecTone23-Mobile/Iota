@@ -23,31 +23,45 @@ class AndroidBuilder(builder):
     )
 
     def print(*args):
+      x = []
+      for i in args:
+        x.append(str(i))
+      for_discord = ' '.join(x)
+      self.function('discord','create_hook', for_discord).send()
       self.shell.pout(*args)
 
     # Process our config
     # Use proc_load to process our custom yaml syntax first into pre
+    print(f'Loading Config at {config_path}')
     pre = self.function('yaml','proc_load',config, self.config)
       
     # Prep for build
-    self.repos = self.function('repo','get_repos','TecTone23-Mobile')
+    # create_hook
+    print(f'Getting repos to build')
+    try:
+      self.repos = self.function('repo','get_repos','TecTone23-Mobile')
+    except Exception as e:
+      self.function('discord','create_hook', f"Failed due to {e}").send()
+      
     self.tobuild = self.repos.tagged('autobuild')
     
     # Now we have a dictionary of repos that we need to build
     for repo in self.tobuild:
-      #print(repo, self.tobuild[repo])
+      print(repo, self.tobuild[repo])
 
       # Let's convert them to a folder structure using the folders cog
-      path = self.function('folders','from_name',
-                    repo,     # Folder to create
-                    '_',      # Seperator
-                    './.',    # Ignore this case
-                    'platform' 
-                   )
-      self.tobuild[repo].clone(path)
+      #path = self.function('folders','from_name',
+      #              repo,     # Folder to create
+      #              '_',      # Seperator
+      #              './.',    # Ignore this case
+      #              'platform' 
+      #             )
+      #self.tobuild[repo].clone(path)
 
   def run(self):    
-    self.script('test','mono',None)
+    ret = self.script('prep','mono',None)
+    if ret[0] == 1:
+      self.function('discord','create_hook', f"Failed due to {ret[1]}").send()
 
 _ = shell(cog_path=cogs)
 builder = AndroidBuilder(config, cogs, _)
