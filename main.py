@@ -4,6 +4,7 @@
 
 from iota_core import shell, builder
 import sys
+from time import sleep
 
 # Config locations
 config = "android.yaml"
