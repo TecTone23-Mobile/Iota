@@ -33,8 +33,8 @@ scripts:
       ccache -M 100G
       ccache -o compression=true
       bash source build/envsetup.sh
-      lunch aosp_arm-eng
-      m -j8
+      lunch sdk_phone_x86_64
+      m -j32
     test: |
       echo ==> Running tests
     env:
