@@ -10,6 +10,15 @@ from time import sleep
 config = "android.yaml"
 cogs   = "cogs.json"
 
+# Source
+# Moved from android.yaml to here due to Bash being dumb
+import os, subprocess
+if os.path.isfile("build/envsetup.sh"):
+    command = 'env -i sh -c "source build/envsetup.sh && env"'
+    for line in subprocess.getoutput(command).split("\n"):
+        key, value = line.split("=")
+        os.environ[key]= value
+
 # Here we can modify the builder to our heart's content
 class AndroidBuilder(builder):
   
