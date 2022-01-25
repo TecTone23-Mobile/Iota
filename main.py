@@ -59,7 +59,8 @@ class AndroidBuilder(builder):
       #self.tobuild[repo].clone(path)
 
   def run(self):    
-    ret = self.script('prep','mono',None)
+    self.function('discord','create_hook', f"Target: [Build]").send()
+    ret = self.script('build','mono',None)
     if ret[0] == 1:
       self.function('discord','create_hook', f"Failed due to {ret[1]}").send()
 
