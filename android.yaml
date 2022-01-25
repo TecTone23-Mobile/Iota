@@ -32,7 +32,7 @@ scripts:
       echo ==> Building
       ccache -M 100G
       ccache -o compression=true
-      bash source build/envsetup.sh
+      source build/envsetup.sh
       lunch sdk_phone_x86_64
       m -j32
     test: |

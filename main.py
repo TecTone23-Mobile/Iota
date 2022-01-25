@@ -27,6 +27,8 @@ class AndroidBuilder(builder):
       for i in args:
         x.append(str(i))
       for_discord = ' '.join(x)
+      # Sleep to remove rate limiting on webhook
+      sleep(1)
       self.function('discord','create_hook', for_discord).send()
       self.shell.pout(*args)
 
