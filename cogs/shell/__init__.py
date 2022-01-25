@@ -47,5 +47,5 @@ def execute(command, env):
         return [0,'']
     except Exception as e:
       print("SHELL: {}: {}".format(e,command.strip()))
-      print(f"ENV: {env}")
+      #print(f"ENV: {env}")
       return [1, e]
