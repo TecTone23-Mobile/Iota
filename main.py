@@ -34,20 +34,24 @@ class AndroidBuilder(builder):
     # Use proc_load to process our custom yaml syntax first into pre
     print(f'Loading Config at {config_path}')
     pre = self.function('yaml','proc_load',config, self.config)
-      
+
+    
     # Prep for build
     # create_hook
     print(f'Getting repos to build')
     try:
       self.repos = self.function('repo','get_repos','TecTone23-Mobile')
+      self.tobuild = self.repos.tagged('autobuild')
+      for repo in self.tobuild:
+        print(repo, self.tobuild[repo])
     except Exception as e:
       self.function('discord','create_hook', f"Failed due to {e}").send()
+      print('Skipping repos due to GitHub rate-limiting')
       
-    self.tobuild = self.repos.tagged('autobuild')
+    
     
     # Now we have a dictionary of repos that we need to build
-    for repo in self.tobuild:
-      print(repo, self.tobuild[repo])
+    #
 
       # Let's convert them to a folder structure using the folders cog
       #path = self.function('folders','from_name',
