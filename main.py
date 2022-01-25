@@ -16,8 +16,11 @@ import os, subprocess
 if os.path.isfile("build/envsetup.sh"):
     command = 'env -i sh -c "source build/envsetup.sh && env"'
     for line in subprocess.getoutput(command).split("\n"):
+      try:
         key, value = line.split("=")
-        os.environ[key]= value
+      except Exception as e:
+        print(f'Failed to load: {line}')
+      os.environ[key]= value
 
 # Here we can modify the builder to our heart's content
 class AndroidBuilder(builder):
