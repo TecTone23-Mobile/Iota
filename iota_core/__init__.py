@@ -61,7 +61,7 @@ class shell:
     return builtins
 
 class builder:
-  def __init__(self, cog_path=None, config_path=None, shell=None):
+  def __init__(self, cog_path=None, config_path=None, shell=None, silent=False):
     """
     cog_path <- Location of defined cogs
     """
@@ -70,7 +70,7 @@ class builder:
     self.user           = getpass.getuser()
     self.shell          = shell
     self.config         = self.get_config(config_path)
-
+    self.silent         = silent
   def get_config(self, path):
     config = self.shell.built_in['yaml']['load'](path, quiet=False)
     return config
@@ -92,7 +92,8 @@ class builder:
       for _ in self.config['scripts'][project][script_name].split('\n'):
         ######
         ###### TecTone only, requires discord cog
-        self.function('discord','create_hook', f"Executing: {_}").send()
+        if not self.silent: 
+          self.function('discord','create_hook', f"Executing: {_}").send()
         ######
         ######
         ret = self.shell.built_in['shell']['execute'](_, quiet=False, vars=[env_vars])
