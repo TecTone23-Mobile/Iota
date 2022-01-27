@@ -13,24 +13,27 @@ cogs   = "cogs.json"
 # Here we can modify the builder to our heart's content
 class AndroidBuilder(builder):
   
-  def __init__(self, config_path, cog_path, shell) -> None:
+  def __init__(self, config_path, cog_path, shell, silent) -> None:
     # Init Shell
     self.shell = shell
+    self.silent = silent
     # Init our builder
     builder.__init__(self,
       config_path=config_path,
       cog_path=cogs,
-      shell=self.shell
+      shell=self.shell,
+      silent=silent
     )
-
+  
     def print(*args):
-      x = []
-      for i in args:
-        x.append(str(i))
-      for_discord = ' '.join(x)
-      # Sleep to remove rate limiting on webhook
-      sleep(1)
-      self.function('discord','create_hook', for_discord).send()
+      if not silent:  
+        x = []
+        for i in args:
+          x.append(str(i))
+        for_discord = ' '.join(x)
+        # Sleep to remove rate limiting on webhook
+        sleep(1)
+        self.function('discord','create_hook', for_discord).send()
       self.shell.pout(*args)
 
     # Process our config
@@ -48,7 +51,6 @@ class AndroidBuilder(builder):
       for repo in self.tobuild:
         print(repo, self.tobuild[repo])
     except Exception as e:
-      self.function('discord','create_hook', f"Failed due to {e}").send()
       print('Skipping repos due to GitHub rate-limiting')
       
     
@@ -66,17 +68,19 @@ class AndroidBuilder(builder):
       #self.tobuild[repo].clone(path)
 
   def run(self):    
-    self.function('discord','create_hook', f"Target: [Build]").send()
+    if not self.silent:
+      self.function('discord','create_hook', f"Target: [Build]").send()
     ret = self.script('build','mono',None)
     if ret[0] == 1:
       self.function('discord','create_hook', f"Failed due to {ret[1]}").send()
 
-_ = shell(cog_path=cogs)
-builder = AndroidBuilder(config, cogs, _)
 
 if __name__ == "__main__":
   args = sys.argv[1:]
+  _ = shell(cog_path=cogs)
   if args:
+    silent = True if '-s' in args else False
+    builder = AndroidBuilder(config, cogs, _, silent=silent)
     builder.run()
   else:
     _.pout("==> Loaded in console mode")
