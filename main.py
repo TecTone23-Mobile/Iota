@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 # IOTA - Management toolkit for TecTone 23
 # Author: Artur Z  (HUSKI3 @ gh)
 # Date: 10/12/2021
