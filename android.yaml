@@ -31,8 +31,8 @@ scripts:
     build: |
       echo ==> Building
       ccache -M 100G
+      # . build/envsetup.sh 
       ccache -o compression=true
-      . build/envsetup.sh 
       lunch sdk_phone_x86_64
       m -j32
     test: |
@@ -48,4 +48,3 @@ scripts:
       echo TODO
     test: |
       cat kernel/tests.txt
-  
