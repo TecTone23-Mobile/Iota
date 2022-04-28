@@ -140,4 +140,4 @@ class builder:
 
         if ret[0] != 0:
           return ret
-    
+    return ret # Should be fine as long as a script that doesn't exist is called
