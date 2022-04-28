@@ -31,7 +31,6 @@ scripts:
     build: |
       echo ==> Building
       ccache -M 100G
-      # . build/envsetup.sh 
       ccache -o compression=true
       lunch sdk_phone_x86_64
       m -j32
