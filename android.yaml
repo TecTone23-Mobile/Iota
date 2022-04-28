@@ -37,6 +37,7 @@ scripts:
       m -j32
     test: |
       echo ==> Running tests
+      @cog > shell.trace_env(all)
     env:
       USE_CCACHE: "1"
       CCACHE_EXEC: "/usr/bin/ccache"

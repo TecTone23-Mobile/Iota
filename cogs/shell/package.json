@@ -3,7 +3,8 @@
   "version":"1",
   "functions":[
     "echo",
-    "execute"
+    "execute",
+    "trace_env"
   ],
   "variables":"multi",
   "depends":"cogs.shell"

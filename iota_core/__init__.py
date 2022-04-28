@@ -71,6 +71,7 @@ class builder:
     self.shell          = shell
     self.config         = self.get_config(config_path)
     self.silent         = silent
+
   def get_config(self, path):
     config = self.shell.built_in['yaml']['load'](path, quiet=False)
     return config
@@ -78,7 +79,7 @@ class builder:
   def function(self, cog, func, *args, quiet=False):
     return self.shell.built_in[cog][func](*args, quiet=quiet)
 
-  def script(self, script_name, project, args):                            
+  def script(self, script_name, project, args):                          
     if script_name in self.config['scripts'][project]:
       if 'env' in self.config['scripts'][project]:
         env_vars = self.config['scripts'][project]['env']
@@ -89,14 +90,54 @@ class builder:
         for x in os.environ:
           env_vars[x] = os.environ[x]
         env_vars['PATH'] = env_vars['PATH'].replace('${PATH}',os.environ['PATH'])
-      for _ in self.config['scripts'][project][script_name].split('\n'):
+      lines = self.config['scripts'][project][script_name].split('\n')
+      ret = [1, f'Failed to acquire any return statements, ran lines 0-{len(lines)}. Perhaps the script exited due to invalid formatting?']  
+      for _ in lines:
         ######
         ###### TecTone only, requires discord cog
         if not self.silent: 
           self.function('discord','create_hook', f"Executing: {_}").send()
         ######
         ######
-        ret = self.shell.built_in['shell']['execute'](_, quiet=False, vars=[env_vars])
+
+        # First we want to check if this is a 
+        # shell command or we are calling a cog.
+        # Default formatting follows:
+        # -------------------------------------
+        # | @cog > COG_NAME.FUNC_NAME (ARGS)  | -> Cog
+        # -------------------------------------
+        # | ANY **                            | -> Shell
+        # -------------------------------------
+        
+        if not _: continue # Make sure it's a valid line
+
+        if _[0] == '@':
+          # We have found a cog, process it
+          ar: list = _.split('>')[1:] # Remove the "@cog" at ">"
+          
+          # [TODO]: Shorten this
+          cog_name = ar[0].split('.', 1)[0].strip()
+          cog_func = ar[0].split('.', 1)[1].split('(')[0] # VERY SMART! LMAO
+          cog_args = ar[0].split('.', 1)[1].split('(')[1].strip(')')
+
+          print(
+            cog_name,
+            cog_func,
+            cog_args,
+            sep='\n'
+          )
+
+          if cog_name in self.shell.built_in and cog_func in self.shell.built_in[cog_name]:
+            # If the cog is present, try to execute
+            ret = self.shell.built_in[cog_name][cog_func](cog_args)
+
+          else: raise Exception(f"[BUILDER.script] Failed to locate {cog_name}, or {cog_func} in {cog_name}, in {self.shell.built_in.keys()}")
+
+          #self.shell.built_in
+
+        else:
+          ret = self.shell.built_in['shell']['execute'](_, quiet=False, vars=[env_vars])
+
         if ret[0] != 0:
           return ret
     

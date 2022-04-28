@@ -2,11 +2,13 @@ import requests, os
 
 class hook:
   def __init__(self, description=''):
-    self.url = os.environ['hook']
+    self.url = os.environ['hook'] if os.environ['hook'] != "none" else None
     self.description=description
     
     
   def send(self,content=""):
+    if not self.url:
+      return
     description=self.description
     data = {
     "content" : content,

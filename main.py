@@ -70,9 +70,12 @@ class AndroidBuilder(builder):
   def run(self):    
     if not self.silent:
       self.function('discord','create_hook', f"Target: [Build]").send()
-    ret = self.script('build','mono',None)
-    if ret[0] == 1:
-      self.function('discord','create_hook', f"Failed due to {ret[1]}").send()
+    ret = self.script('test','mono',None)
+    if ret:
+      if ret[0] == 1:
+        self.function('discord','create_hook', f"Failed due to {ret[1]}").send()
+    else:
+      self.function('discord','create_hook', f"Failed due to 'ret' not being a valid type. Perhaps a cog returns invalid format and breaks our .script?").send()
 
 
 if __name__ == "__main__":

@@ -1,7 +1,17 @@
 import subprocess
+import os
+import pprint
+
+pprint = pprint.PrettyPrinter(indent=2).pprint
 
 def echo(*args):
   print(*args)
+
+def trace_env(scope: str):
+  if scope == 'all':
+    pprint(dict(os.environ))
+    return [0,'']
+  else: return [1,'Failed to acquire a scope?']
 
 def execute(command, env):
   if "|" in command:
