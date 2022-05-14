@@ -42,12 +42,15 @@ class shell:
     inp = input.split(' ')
     if inp[0].split('.')[0] in self.built_in:
       # Found the function in a cog, let's get the function
-      cog = self.built_in[inp[0].split('.')[0]]
       if '.' in inp[0]:
+        cog = self.built_in[inp[0].split('.')[0]]
         func = inp[0].split('.')[1]
       else:
         raise Exception(f"Unkown call to reference {inp[0]}")
-      cog[func](' '.join(input.split(' ')[1:]))
+      if func in cog:
+        cog[func](' '.join(input.split(' ')[1:]))
+      else:
+        raise Exception(f"Unknown call [{func}] for cog [{inp[0].split('.')[0]}]")
     else:
       self.pout(f'[IOTA] Command not found')
 
