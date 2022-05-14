@@ -55,7 +55,7 @@ class AndroidBuilder(builder):
     except Exception as e:
       print('Skipping repos due to GitHub rate-limiting')
       
-    
+    #print(self.tobuild)
     
     # Now we have a dictionary of repos that we need to build
     #
@@ -72,7 +72,7 @@ class AndroidBuilder(builder):
   def run(self):    
     if not self.silent:
       self.function('discord','create_hook', f"Target: [Build]").send()
-    ret = self.script('build','mono',None)
+    ret = self.script('test','mono',None)
     if ret:
       if ret[0] == 1:
         self.function('discord','create_hook', f"Failed due to {ret[1]}").send()

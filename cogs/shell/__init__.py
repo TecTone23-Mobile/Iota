@@ -13,6 +13,13 @@ def trace_env(scope: str):
     return [0,'']
   else: return [1,'Failed to acquire a scope?']
 
+def source(script):
+    import subprocess, os
+    pipe = subprocess.Popen(". %s; env" % script, stdout=subprocess.PIPE, shell=True)
+    output = pipe.communicate()[0]
+    env = dict((line.split("=", 1) for line in output.splitlines()))
+    os.environ.update(env)
+
 def execute(command, env):
   if "|" in command:
     # save for restoring later on
@@ -41,7 +48,7 @@ def execute(command, env):
         os.close(fdout)
   
         try:
-            subprocess.run(cmd.strip().split(), shell=True, env=env)
+            subprocess.run(cmd.strip().split(), shell=True, env=os.environ.copy())
         except Exception:
             print("SHELL: command not found: {}".format(cmd.strip()))
   
@@ -53,7 +60,7 @@ def execute(command, env):
   else:
     try:
       if command.strip():
-        subprocess.run(command.strip().split(' '), env=env)
+        subprocess.run(command.strip().split(' '), env=os.environ.copy())
         return [0,'']
     except Exception as e:
       print("SHELL: {}: {}".format(e,command.strip()))

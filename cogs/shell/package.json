@@ -4,6 +4,7 @@
   "functions":[
     "echo",
     "execute",
+    "source",
     "trace_env"
   ],
   "variables":"multi",

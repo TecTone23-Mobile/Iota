@@ -34,6 +34,8 @@ scripts:
       m -j32
     test: |
       echo ==> Running tests
+      hmm
+      @cog > shell.source(./env.sh)
       @cog > shell.trace_env(all)
     env:
       USE_CCACHE: "1"
