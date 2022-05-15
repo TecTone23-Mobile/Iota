@@ -34,8 +34,7 @@ scripts:
       m -j32
     test: |
       echo ==> Running tests
-      hmm
-      @cog > shell.source(./env.sh)
+      ./scripts/mono/build/00_scope.sh
       @cog > shell.trace_env(all)
     env:
       USE_CCACHE: "1"
