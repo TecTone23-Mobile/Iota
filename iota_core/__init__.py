@@ -144,6 +144,8 @@ class builder:
         else:
           ret = self.shell.built_in['shell']['execute'](_, quiet=False, vars=[env_vars])
 
+        if ret is None:
+          raise Exception("Return was invalid, perhaps the previous step has failed to execute?")
         if ret[0] != 0:
           return ret
     return ret # Should be fine as long as a script that doesn't exist is called
